@@ -1,6 +1,6 @@
 {
-  "name": "lb4-files-extension",
-  "version": "0.0.1",
+  "name": "@bringbeyond/lb4-files-extension",
+  "version": "0.1.0",
   "description": "lb4 files extension",
   "keywords": [
     "loopback-extension",
@@ -30,7 +30,10 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/BringBeyond/lb4-files-extension"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "author": "julian-al-03 <julian.albers@bahrrauhkirschning.com>",
   "license": "",
