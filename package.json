@@ -44,7 +44,7 @@
     "!*/__tests__"
   ],
   "peerDependencies": {
-    "@BringBeyond/lb4-base-extension": "./../lb4-base-extension",
+    "@bringbeyond/lb4-base-extension": "^0.1.7",
     "@loopback/boot": "^5.0.1",
     "@loopback/build": "^9.0.1",
     "@loopback/context": "^5.0.1",
@@ -64,7 +64,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@BringBeyond/lb4-base-extension": "./../lb4-base-extension",
+    "@bringbeyond/lb4-base-extension": "^0.1.7",
     "@loopback/boot": "^5.0.1",
     "@loopback/build": "^9.0.1",
     "@loopback/context": "^5.0.1",
