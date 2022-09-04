@@ -10,16 +10,16 @@
  * Copyright 2022, Bahr Rauh Kirschning UG
  */
 
+import {AuthUser} from '@BringBeyond/lb4-base-extension';
 import {inject} from '@loopback/core';
-import {repository} from '@loopback/repository';
-import {del, getModelSchemaRef, HttpErrors, post, Request, requestBody, Response, RestBindings} from '@loopback/rest';
+import {Filter, repository} from '@loopback/repository';
+import {del, get, getModelSchemaRef, HttpErrors, param, post, Request, requestBody, response, Response, RestBindings} from '@loopback/rest';
 import * as fs from 'fs-extra';
 import {authenticate, AuthenticationBindings, STRATEGY} from 'loopback4-authentication';
 import {authorize} from 'loopback4-authorization';
 import {PermissionKey} from '../enums/permission-key.enum';
 import {BLOB_SERVICE, FILE_UPLOAD_SERVICE} from '../keys';
-import {FileDownloadDto} from '../models';
-import {AuthUser} from '@BringBeyond/lb4-base-extension';
+import {File as FileModel, FileDownloadDto, FileWithRelations} from '../models';
 import {FileRepository} from '../repositories';
 import {BlobstorageService} from '../services';
 import {FileUploadHandler} from '../types';
@@ -52,6 +52,25 @@ export class FileController {
     private readonly user: AuthUser | undefined,
     @inject(RestBindings.Http.RESPONSE) private response: Response,
   ) { }
+
+  @authorize({permissions: [PermissionKey.ViewFile]})
+  @get('/files')
+  @response(200, {
+    description: 'Array of File model instances',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: getModelSchemaRef(FileModel, {includeRelations: true}),
+        },
+      },
+    },
+  })
+  async find(
+    @param.filter(FileModel) filter?: Filter<File>,
+  ): Promise<FileWithRelations[]> {
+    return this.fileRepository.find(filter);
+  }
 
   @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.CreateFile]})
@@ -143,12 +162,19 @@ export class FileController {
     @inject(RestBindings.Http.RESPONSE)
     response: Response,
   ) {
-    const fileRecords = await this.fileRepository.find({where: {id: {inq: fileDownloadDto.fileIds}}});
+    let fileRecords;
+
+    if (fileDownloadDto.fileIds) {
+      fileRecords = await this.fileRepository.find({where: {id: {inq: fileDownloadDto.fileIds}}});
+    } else {
+      fileRecords = await this.fileRepository.find(fileDownloadDto.filter);
+    }
+
     if (fileRecords) {
       const fileStrings: Array<Object> = [];
       for (const fileRecord of fileRecords) {
         const fileUrl = await this.blobstorageService.downloadFile(fileRecord, this.user?.defaultTenant ?? '');
-        fileStrings.push({fileUrl, fileId: fileRecord.id, filename: fileRecord.originalname, fileType: fileRecord.fileType});
+        fileStrings.push({fileUrl, id: fileRecord.id, fileId: fileRecord.fileId, filename: fileRecord.originalname, fileType: fileRecord.fileType});
       }
 
       return fileStrings;

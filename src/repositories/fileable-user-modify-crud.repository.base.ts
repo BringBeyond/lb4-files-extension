@@ -1,14 +1,12 @@
+import {AuthUser, DefaultUserModifyCrudRepository, Entity, UserdbDataSource} from '@BringBeyond/lb4-base-extension';
 import {AnyObject, Count, DataObject, Filter, Getter, Inclusion, InclusionFilter} from '@loopback/repository';
 import {HttpErrors} from '@loopback/rest';
-import {UserdbDataSource} from '@BringBeyond/lb4-base-extension';
 import {Options} from 'loopback-datasource-juggler';
 import {FileableFileRepository, FileableRepository, FileRepository} from '.';
 import {File, FileableFile} from '../models';
 import {FileObject} from '../models/file-object.model';
 import {FileableUserModifiableEntity} from '../models/fileable-user-modifiable-entity.model';
-import {AuthUser} from '@BringBeyond/lb4-base-extension';
 import {BlobstorageService} from '../services';
-import {DefaultUserModifyCrudRepository, Entity} from '@BringBeyond/lb4-base-extension';
 
 
 export abstract class FileableUserModifyCrudRepository<T extends FileableUserModifiableEntity, ID, Relations extends object = {}> extends DefaultUserModifyCrudRepository<T, ID, Relations> {
@@ -49,10 +47,11 @@ export abstract class FileableUserModifyCrudRepository<T extends FileableUserMod
     if (!Array.isArray(files)) {
       files = [files]
     }
+    if (files.length === 0) return {count: 0}
     for (const file of files) {
-      if (file instanceof String) fileId = file
-      else fileId = file.id
-      orFilter.push({fileableId: <string>fileableId, fileableType: this.fileableType, fileId: <string>fileId})
+      if (file instanceof File) fileId = file.id
+      else fileId = file
+      orFilter.push({and: [{fileableId: <string>fileableId}, {fileableType: this.fileableType}, {fileId: <string>fileId}]})
     }
     return this.fileableFileRepo.deleteAll({or: orFilter})
   }
@@ -122,7 +121,7 @@ export abstract class FileableUserModifyCrudRepository<T extends FileableUserMod
     const filters = this.splitInclusionFilter(filter)
     if (filters) {
       let resp = await super.find(filters?.fileableFilter, options)
-      if (resp === []) return resp
+      if (resp.length == 0) return resp
       return this.includeFiles(resp, filters?.fileScopeFilter)
     }
     else return super.find(filter, options)
@@ -165,7 +164,7 @@ export abstract class FileableUserModifyCrudRepository<T extends FileableUserMod
 
   //takes fileables and filter (file scope) and includes related files
   private async includeFilesOne(fileable: T & Relations, filter?: Filter<AnyObject>): Promise<T & Relations> {
-    let filesFilter = {where: {fileableId: fileable?.id, fileableType: this.fileableType}, include: [{relation: 'file', scope: filter}]}
+    let filesFilter = {where: {fileableId: fileable?.id, fileableType: this.fileableType, deleted: false}, include: [{relation: 'file', scope: filter}]}
     let fileablesFilesRes = await this.fileableFileRepo.findAll(filesFilter)
 
     //filter fileableFile objects
@@ -181,7 +180,7 @@ export abstract class FileableUserModifyCrudRepository<T extends FileableUserMod
     //create orFiler to get fileableFiles from all fileables
     let orFilter = [];
     for (const fileable of fileables) {
-      if (fileable.id) orFilter.push({fileableId: fileable.id, fileableType: this.fileableType})
+      if (fileable.id) orFilter.push({fileableId: fileable.id, fileableType: this.fileableType, deleted: false})
     }
 
     //create filter

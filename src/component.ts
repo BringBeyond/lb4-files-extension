@@ -1,21 +1,17 @@
 import {
-  Application,
-  injectable,
-  Component,
+  Application, Component,
   config,
   ContextTags,
   CoreBindings,
-  inject,
-  ControllerClass,
+  inject, injectable
 } from '@loopback/core';
-import { FileableFileRepository, FileableRepository, FileRepository, FILE_UPLOAD_SERVICE, STORAGE_DIRECTORY } from '.';
-import {Lb4FilesExtensionComponentBindings} from './keys'
-import { BlobstorageService } from './services';
-import {DEFAULT_LB4_FILES_EXTENSION_OPTIONS, Lb4FilesExtensionComponentOptions} from './types';
-import multer from 'multer'
+import multer from 'multer';
 import {v4 as uuidv4} from 'uuid';
-import { FileableFileController, FileController } from './controllers';
-import { FileUploadProvider } from '.';
+import {FileableFileRepository, FileableRepository, FileRepository, FileUploadProvider, FILE_UPLOAD_SERVICE, STORAGE_DIRECTORY} from '.';
+import {FileableFileController, FileController} from './controllers';
+import {Lb4FilesExtensionComponentBindings} from './keys';
+import {BlobstorageService} from './services';
+import {DEFAULT_LB4_FILES_EXTENSION_OPTIONS, Lb4FilesExtensionComponentOptions} from './types';
 
 // Configure the binding for Lb4FilesExtensionComponent
 @injectable({tags: {[ContextTags.KEY]: Lb4FilesExtensionComponentBindings.COMPONENT}})
@@ -25,7 +21,7 @@ export class Lb4FilesExtensionComponent implements Component {
   services = [FileUploadProvider]
   constructor(
     @inject(CoreBindings.APPLICATION_INSTANCE)
-    private application: Application & {repository: (repoClass: object)=>{}, dataSource: (repoClass: object)=>{}},
+    private application: Application & {repository: (repoClass: object) => {}, dataSource: (repoClass: object) => {}},
     @config()
     private options: Lb4FilesExtensionComponentOptions = DEFAULT_LB4_FILES_EXTENSION_OPTIONS,
   ) {

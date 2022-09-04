@@ -32,7 +32,10 @@ export class BlobstorageService {
     const blobServiceClient = BlobServiceClient.fromConnectionString(process.env.AZURE_BLOB_CS ?? '');
 
     // Get the tenant container
-    const containerClient = blobServiceClient.getContainerClient(tenant);
+    let containerClient = blobServiceClient.getContainerClient(tenant);
+    if (!await containerClient.exists()) {
+      containerClient = (await blobServiceClient.createContainer(tenant)).containerClient
+    }
 
     // TODO: validate filetTypes
     // Get the blob

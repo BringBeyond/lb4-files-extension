@@ -10,16 +10,24 @@
  * Copyright 2022, Bahr Rauh Kirschning UG
  */
 
-import {Model, model, property} from '@loopback/repository';
+import {Filter, Model, model, property} from '@loopback/repository';
+import {File} from './file.model';
 
 @model()
 export class FileDownloadDto extends Model {
   @property({
     type: 'array',
     itemType: 'string',
-    required: true,
+    required: false,
   })
-  fileIds: string[];
+  fileIds?: string[];
+
+  @property({
+    type: 'object',
+    itemType: 'string',
+    required: false,
+  })
+  filter?: Filter<File>;
 
   constructor(data?: Partial<FileDownloadDto>) {
     super(data);
