@@ -53,6 +53,7 @@ export class FileController {
     @inject(RestBindings.Http.RESPONSE) private response: Response,
   ) { }
 
+  @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.ViewFile]})
   @get('/files')
   @response(200, {
@@ -163,11 +164,10 @@ export class FileController {
     response: Response,
   ) {
     let fileRecords;
-
-    if (fileDownloadDto.fileIds) {
+    if (fileDownloadDto?.fileIds) {
       fileRecords = await this.fileRepository.find({where: {id: {inq: fileDownloadDto.fileIds}}});
     } else {
-      fileRecords = await this.fileRepository.find(fileDownloadDto.filter);
+      fileRecords = await this.fileRepository.find(fileDownloadDto?.filter);
     }
 
     if (fileRecords) {

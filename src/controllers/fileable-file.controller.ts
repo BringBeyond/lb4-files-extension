@@ -59,6 +59,7 @@ export class FileableFileController {
     return this.fileableFileRepository.count(where);
   }
 
+  @authenticate(STRATEGY.BEARER)
   @authorize({permissions: [PermissionKey.ViewFileableFile]})
   @get('/fileable-files')
   @response(200, {
