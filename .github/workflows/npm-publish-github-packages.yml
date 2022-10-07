@@ -14,9 +14,9 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
       - run: echo "@BringBeyond:registry=https://npm.pkg.github.com
-            //npm.pkg.github.com/:_authToken=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" > .npmrc
+            //npm.pkg.github.com/:_authToken=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" > .npmrc
       - run: npm i
       - run: npm run build
       - run: npm publish
         env:
-          NODE_AUTH_TOKEN: "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"
+          NODE_AUTH_TOKEN: "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"
