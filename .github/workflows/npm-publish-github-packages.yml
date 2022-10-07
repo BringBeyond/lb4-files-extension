@@ -13,10 +13,7 @@ jobs:
           always-auth: true
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
+      - run: npm config set '//registry.npmjs.org/:_authToken' "${{secrets.NPM_TOKEN}}"
       - run: npm install
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: npm run build
       - run: npm publish
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
