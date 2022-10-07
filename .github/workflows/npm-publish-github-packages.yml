@@ -13,10 +13,12 @@ jobs:
           always-auth: true
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
-      - run: echo "@BringBeyond:registry=https://npm.pkg.github.com
-            //npm.pkg.github.com/:_authToken=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" > .npmrc
-      - run: npm i
+      - run: |
+          npm install
+      - env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: npm run build
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: "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"
+      - run: |
+          npm publish
+      - env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
