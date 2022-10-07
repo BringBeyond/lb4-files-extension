@@ -13,10 +13,10 @@ jobs:
           always-auth: true
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
-      - run: yarn
+      - run: npm i
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GH_REGISTRY_PACKAGES }}
-      - run: yarn run build
+      - run: npm run build
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
