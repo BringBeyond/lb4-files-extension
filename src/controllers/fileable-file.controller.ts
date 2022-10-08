@@ -12,8 +12,6 @@ import {
   response
 } from '@loopback/rest';
 import {authenticate, STRATEGY} from 'loopback4-authentication';
-import {authorize} from 'loopback4-authorization';
-import {PermissionKey} from '../enums/permission-key.enum';
 import {FileableFile} from '../models';
 import {FileableFileRepository} from '../repositories';
 
@@ -24,7 +22,7 @@ export class FileableFileController {
   ) { }
 
   @authenticate(STRATEGY.BEARER)
-  @authorize({permissions: [PermissionKey.CreateFileableFile]})
+  // @authorize({permissions: [PermissionKey.CreateFileableFile]})
   @post('/fileable-files')
   @response(200, {
     description: 'FileableFile model instance',
@@ -47,7 +45,7 @@ export class FileableFileController {
   }
 
   @authenticate(STRATEGY.BEARER)
-  @authorize({permissions: [PermissionKey.ViewFileableFile]})
+  // @authorize({permissions: [PermissionKey.ViewFileableFile]})
   @get('/fileable-files/count')
   @response(200, {
     description: 'FileableFile model count',
@@ -60,7 +58,7 @@ export class FileableFileController {
   }
 
   @authenticate(STRATEGY.BEARER)
-  @authorize({permissions: [PermissionKey.ViewFileableFile]})
+  // @authorize({permissions: [PermissionKey.ViewFileableFile]})
   @get('/fileable-files')
   @response(200, {
     description: 'Array of FileableFile model instances',
@@ -76,11 +74,11 @@ export class FileableFileController {
   async find(
     @param.filter(FileableFile) filter?: Filter<FileableFile>,
   ): Promise<FileableFile[]> {
-    let resp = await this.fileableFileRepository.find(filter);
+    const resp = await this.fileableFileRepository.find(filter);
     return resp.map(elem => Object.assign({file: elem.file}, elem))
   }
 
-  @authorize({permissions: [PermissionKey.UpdateFileableFile]})
+  // @authorize({permissions: [PermissionKey.UpdateFileableFile]})
   @patch('/fileable-files')
   @response(200, {
     description: 'FileableFile PATCH success count',
@@ -100,7 +98,7 @@ export class FileableFileController {
     return this.fileableFileRepository.updateAll(fileableFile, where);
   }
 
-  @authorize({permissions: [PermissionKey.ViewFileableFile]})
+  // @authorize({permissions: [PermissionKey.ViewFileableFile]})
   @get('/fileable-files/{id}')
   @response(200, {
     description: 'FileableFile model instance',
@@ -114,11 +112,11 @@ export class FileableFileController {
     @param.path.string('id') id: string,
     @param.filter(FileableFile, {exclude: 'where'}) filter?: FilterExcludingWhere<FileableFile>
   ): Promise<FileableFile> {
-    let res = await this.fileableFileRepository.findById(id, filter);
+    const res = await this.fileableFileRepository.findById(id, filter);
     return Object.assign({file: res.file}, res)
   }
 
-  @authorize({permissions: [PermissionKey.UpdateFileableFile]})
+  // @authorize({permissions: [PermissionKey.UpdateFileableFile]})
   @patch('/fileable-files/{id}')
   @response(204, {
     description: 'FileableFile PATCH success',
@@ -137,7 +135,7 @@ export class FileableFileController {
     await this.fileableFileRepository.updateById(id, fileableFile);
   }
 
-  @authorize({permissions: [PermissionKey.UpdateFileableFile]})
+  // @authorize({permissions: [PermissionKey.UpdateFileableFile]})
   @put('/fileable-files/{id}')
   @response(204, {
     description: 'FileableFile PUT success',
@@ -149,7 +147,7 @@ export class FileableFileController {
     await this.fileableFileRepository.replaceById(id, fileableFile);
   }
 
-  @authorize({permissions: [PermissionKey.DeleteFileableFile]})
+  // @authorize({permissions: [PermissionKey.DeleteFileableFile]})
   @del('/fileable-files/{id}')
   @response(204, {
     description: 'FileableFile DELETE success',
