@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@azure/storage-blob": "^12.10.0",
-    "@BringBeyond/lb4-base-extension": "^0.8.12",
+    "@BringBeyond/lb4-base-extension": "^0.8.15",
     "@loopback/boot": "^5.0.1",
     "@loopback/context": "^5.0.1",
     "@loopback/core": "^4.0.1",
