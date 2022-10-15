@@ -278,10 +278,10 @@
     "@babel/helper-validator-identifier" "^7.19.1"
     "to-fast-properties" "^2.0.0"
 
-"@BringBeyond/lb4-base-extension@^0.8.12":
-  "integrity" "sha512-VAqR7+bw8V46usR0Vlce7TiNFlJ8ghILGuoPD4vNg3wn1YNdHoD3vGM0irqrsSYlbABX92f7Vp3rsbff07wd6Q=="
-  "resolved" "https://npm.pkg.github.com/download/@BringBeyond/lb4-base-extension/0.8.12/0f746dc18cef4b41172b773f88510df3e4169a39"
-  "version" "0.8.12"
+"@BringBeyond/lb4-base-extension@^0.8.15":
+  "integrity" "sha512-4uy7sVbC4MJfW7blzAwyHB68bEZlA9VnlZGeGoRKULV3pwCbYZattXCRO/CWYFgzXSCc/Ep5LmLhckXZARNQRg=="
+  "resolved" "https://npm.pkg.github.com/download/@BringBeyond/lb4-base-extension/0.8.15/f2d6b0060d907678fa660836337dcd64bd94b7a3"
+  "version" "0.8.15"
   dependencies:
     "@loopback/authorization" "^0.12.2"
     "@loopback/core" "^4.0.1"
