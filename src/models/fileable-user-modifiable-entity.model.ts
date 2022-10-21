@@ -1,6 +1,6 @@
-import {hasMany, property} from '@loopback/repository';
-import {File} from '.';
 import {UserModifiableEntity} from '@BringBeyond/lb4-base-extension';
+import {hasMany, property} from '@loopback/repository';
+import {FileableFile} from '.';
 
 export abstract class FileableUserModifiableEntity extends UserModifiableEntity {
   @property({
@@ -16,6 +16,6 @@ export abstract class FileableUserModifiableEntity extends UserModifiableEntity 
   })
   id?: string;
 
-  @hasMany(() => File, {keyTo: 'fileableId'})
-  files: File[];
+  @hasMany(() => FileableFile, {keyTo: 'fileableId'})
+  fileableFiles: FileableFile[];
 }
