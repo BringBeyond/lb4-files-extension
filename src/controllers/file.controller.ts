@@ -10,12 +10,29 @@
  * Copyright 2022, Bahr Rauh Kirschning UG
  */
 
-import {AuthUser} from '@BringBeyond/lb4-base-extension';
+import {AuthUser, CONTENT_TYPE} from '@BringBeyond/lb4-base-extension';
 import {inject} from '@loopback/core';
 import {Filter, repository} from '@loopback/repository';
-import {del, get, getModelSchemaRef, HttpErrors, param, post, Request, requestBody, response, Response, RestBindings} from '@loopback/rest';
+import {
+  del,
+  get,
+  getModelSchemaRef,
+  HttpErrors,
+  param,
+  post,
+  Request,
+  requestBody,
+  response,
+  Response,
+  RestBindings,
+} from '@loopback/rest';
 import * as fs from 'fs-extra';
-import {authenticate, AuthenticationBindings, STRATEGY} from 'loopback4-authentication';
+import {
+  authenticate,
+  AuthenticationBindings,
+  STRATEGY,
+} from 'loopback4-authentication';
+import {authorize} from 'loopback4-authorization';
 import {BLOB_SERVICE, FILE_UPLOAD_SERVICE} from '../keys';
 import {File as FileModel, FileDownloadDto, FileWithRelations} from '../models';
 import {FileRepository} from '../repositories';
@@ -49,15 +66,15 @@ export class FileController {
     @inject(AuthenticationBindings.CURRENT_USER)
     private readonly user: AuthUser | undefined,
     @inject(RestBindings.Http.RESPONSE) private response: Response,
-  ) { }
+  ) {}
 
   @authenticate(STRATEGY.BEARER)
-  // @authorize({permissions: [PermissionKey.ViewFile]})
+  @authorize({permissions: ['*']})
   @get('/files')
   @response(200, {
     description: 'Array of File model instances',
     content: {
-      'application/json': {
+      [CONTENT_TYPE.JSON]: {
         schema: {
           type: 'array',
           items: getModelSchemaRef(FileModel, {includeRelations: true}),
@@ -73,6 +90,7 @@ export class FileController {
 
   @authenticate(STRATEGY.BEARER)
   // @authorize({permissions: [PermissionKey.CreateFile]})
+  @authorize({permissions: ['*']})
   @post('/files', {
     responses: {
       200: {
@@ -112,6 +130,7 @@ export class FileController {
 
   @authenticate(STRATEGY.BEARER)
   // @authorize({permissions: [PermissionKey.CreateFile]})
+  @authorize({permissions: ['*']})
   @del('/file/temp', {
     responses: {
       204: {
@@ -146,11 +165,12 @@ export class FileController {
 
   @authenticate(STRATEGY.BEARER)
   // @authorize({permissions: [PermissionKey.ViewFile]})
+  @authorize({permissions: ['*']})
   @post('/filedownload')
   async downloadFile(
     @requestBody({
       content: {
-        'application/json': {
+        [CONTENT_TYPE.JSON]: {
           schema: getModelSchemaRef(FileDownloadDto, {
             title: 'getFiles',
           }),
@@ -163,7 +183,9 @@ export class FileController {
   ) {
     let fileRecords;
     if (fileDownloadDto?.fileIds) {
-      fileRecords = await this.fileRepository.find({where: {id: {inq: fileDownloadDto.fileIds}}});
+      fileRecords = await this.fileRepository.find({
+        where: {id: {inq: fileDownloadDto.fileIds}},
+      });
     } else {
       fileRecords = await this.fileRepository.find(fileDownloadDto?.filter);
     }
@@ -171,8 +193,17 @@ export class FileController {
     if (fileRecords) {
       const fileStrings: Array<Object> = [];
       for (const fileRecord of fileRecords) {
-        const fileUrl = await this.blobstorageService.downloadFile(fileRecord, this.user?.defaultTenant ?? '');
-        fileStrings.push({fileUrl, id: fileRecord.id, fileId: fileRecord.fileId, filename: fileRecord.originalname, fileType: fileRecord.fileType});
+        const fileUrl = await this.blobstorageService.downloadFile(
+          fileRecord,
+          this.user?.defaultTenant ?? '',
+        );
+        fileStrings.push({
+          fileUrl,
+          id: fileRecord.id,
+          fileId: fileRecord.fileId,
+          filename: fileRecord.originalname,
+          fileType: fileRecord.fileType,
+        });
       }
 
       return fileStrings;

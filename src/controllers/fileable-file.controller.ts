@@ -1,17 +1,25 @@
+import {CONTENT_TYPE} from '@BringBeyond/lb4-base-extension';
 import {
   Count,
   CountSchema,
   Filter,
   FilterExcludingWhere,
   repository,
-  Where
+  Where,
 } from '@loopback/repository';
 import {
-  del, get,
-  getModelSchemaRef, param, patch, post, put, requestBody,
-  response
+  del,
+  get,
+  getModelSchemaRef,
+  param,
+  patch,
+  post,
+  put,
+  requestBody,
+  response,
 } from '@loopback/rest';
 import {authenticate, STRATEGY} from 'loopback4-authentication';
+import {authorize} from 'loopback4-authorization';
 import {FileableFile} from '../models';
 import {FileableFileRepository} from '../repositories';
 
@@ -19,19 +27,20 @@ export class FileableFileController {
   constructor(
     @repository(FileableFileRepository)
     public fileableFileRepository: FileableFileRepository,
-  ) { }
+  ) {}
 
   @authenticate(STRATEGY.BEARER)
   // @authorize({permissions: [PermissionKey.CreateFileableFile]})
+  @authorize({permissions: ['*']})
   @post('/fileable-files')
   @response(200, {
     description: 'FileableFile model instance',
-    content: {'application/json': {schema: getModelSchemaRef(FileableFile)}},
+    content: {[CONTENT_TYPE.JSON]: {schema: getModelSchemaRef(FileableFile)}},
   })
   async create(
     @requestBody({
       content: {
-        'application/json': {
+        [CONTENT_TYPE.JSON]: {
           schema: getModelSchemaRef(FileableFile, {
             title: 'NewFileableFile',
             exclude: ['id'],
@@ -46,10 +55,11 @@ export class FileableFileController {
 
   @authenticate(STRATEGY.BEARER)
   // @authorize({permissions: [PermissionKey.ViewFileableFile]})
+  @authorize({permissions: ['*']})
   @get('/fileable-files/count')
   @response(200, {
     description: 'FileableFile model count',
-    content: {'application/json': {schema: CountSchema}},
+    content: {[CONTENT_TYPE.JSON]: {schema: CountSchema}},
   })
   async count(
     @param.where(FileableFile) where?: Where<FileableFile>,
@@ -59,11 +69,12 @@ export class FileableFileController {
 
   @authenticate(STRATEGY.BEARER)
   // @authorize({permissions: [PermissionKey.ViewFileableFile]})
+  @authorize({permissions: ['*']})
   @get('/fileable-files')
   @response(200, {
     description: 'Array of FileableFile model instances',
     content: {
-      'application/json': {
+      [CONTENT_TYPE.JSON]: {
         schema: {
           type: 'array',
           items: getModelSchemaRef(FileableFile, {includeRelations: true}),
@@ -75,19 +86,20 @@ export class FileableFileController {
     @param.filter(FileableFile) filter?: Filter<FileableFile>,
   ): Promise<FileableFile[]> {
     const resp = await this.fileableFileRepository.find(filter);
-    return resp.map(elem => Object.assign({file: elem.file}, elem))
+    return resp.map(elem => Object.assign({file: elem.file}, elem));
   }
 
   // @authorize({permissions: [PermissionKey.UpdateFileableFile]})
+  @authorize({permissions: ['*']})
   @patch('/fileable-files')
   @response(200, {
     description: 'FileableFile PATCH success count',
-    content: {'application/json': {schema: CountSchema}},
+    content: {[CONTENT_TYPE.JSON]: {schema: CountSchema}},
   })
   async updateAll(
     @requestBody({
       content: {
-        'application/json': {
+        [CONTENT_TYPE.JSON]: {
           schema: getModelSchemaRef(FileableFile, {partial: true}),
         },
       },
@@ -99,24 +111,27 @@ export class FileableFileController {
   }
 
   // @authorize({permissions: [PermissionKey.ViewFileableFile]})
+  @authorize({permissions: ['*']})
   @get('/fileable-files/{id}')
   @response(200, {
     description: 'FileableFile model instance',
     content: {
-      'application/json': {
+      [CONTENT_TYPE.JSON]: {
         schema: getModelSchemaRef(FileableFile, {includeRelations: true}),
       },
     },
   })
   async findById(
     @param.path.string('id') id: string,
-    @param.filter(FileableFile, {exclude: 'where'}) filter?: FilterExcludingWhere<FileableFile>
+    @param.filter(FileableFile, {exclude: 'where'})
+    filter?: FilterExcludingWhere<FileableFile>,
   ): Promise<FileableFile> {
     const res = await this.fileableFileRepository.findById(id, filter);
-    return Object.assign({file: res.file}, res)
+    return Object.assign({file: res.file}, res);
   }
 
   // @authorize({permissions: [PermissionKey.UpdateFileableFile]})
+  @authorize({permissions: ['*']})
   @patch('/fileable-files/{id}')
   @response(204, {
     description: 'FileableFile PATCH success',
@@ -125,7 +140,7 @@ export class FileableFileController {
     @param.path.string('id') id: string,
     @requestBody({
       content: {
-        'application/json': {
+        [CONTENT_TYPE.JSON]: {
           schema: getModelSchemaRef(FileableFile, {partial: true}),
         },
       },
@@ -136,6 +151,7 @@ export class FileableFileController {
   }
 
   // @authorize({permissions: [PermissionKey.UpdateFileableFile]})
+  @authorize({permissions: ['*']})
   @put('/fileable-files/{id}')
   @response(204, {
     description: 'FileableFile PUT success',
@@ -148,6 +164,7 @@ export class FileableFileController {
   }
 
   // @authorize({permissions: [PermissionKey.DeleteFileableFile]})
+  @authorize({permissions: ['*']})
   @del('/fileable-files/{id}')
   @response(204, {
     description: 'FileableFile DELETE success',
