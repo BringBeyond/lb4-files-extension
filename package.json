@@ -1,6 +1,6 @@
 {
   "name": "@bringbeyond/lb4-files-extension",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "lb4 files extension",
   "keywords": [
     "loopback-extension",
