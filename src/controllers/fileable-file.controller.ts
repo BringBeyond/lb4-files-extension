@@ -20,6 +20,7 @@ import {
 } from '@loopback/rest';
 import {authenticate, STRATEGY} from 'loopback4-authentication';
 import {authorize} from 'loopback4-authorization';
+import {PermissionKey} from '../enums/permission-key.enum';
 import {FileableFile} from '../models';
 import {FileableFileRepository} from '../repositories';
 
@@ -30,8 +31,8 @@ export class FileableFileController {
   ) {}
 
   @authenticate(STRATEGY.BEARER)
-  // @authorize({permissions: [PermissionKey.CreateFileableFile]})
-  @authorize({permissions: ['*']})
+  @authorize({permissions: [PermissionKey.CreateFileableFile]})
+  //@authorize({permissions: ['*']})
   @post('/fileable-files')
   @response(200, {
     description: 'FileableFile model instance',
@@ -54,8 +55,8 @@ export class FileableFileController {
   }
 
   @authenticate(STRATEGY.BEARER)
-  // @authorize({permissions: [PermissionKey.ViewFileableFile]})
-  @authorize({permissions: ['*']})
+  @authorize({permissions: [PermissionKey.ViewFileableFile]})
+  // @authorize({permissions: ['*']})
   @get('/fileable-files/count')
   @response(200, {
     description: 'FileableFile model count',
@@ -68,8 +69,8 @@ export class FileableFileController {
   }
 
   @authenticate(STRATEGY.BEARER)
-  // @authorize({permissions: [PermissionKey.ViewFileableFile]})
-  @authorize({permissions: ['*']})
+  @authorize({permissions: [PermissionKey.ViewFileableFile]})
+  // @authorize({permissions: ['*']})
   @get('/fileable-files')
   @response(200, {
     description: 'Array of FileableFile model instances',
@@ -89,8 +90,8 @@ export class FileableFileController {
     return resp.map(elem => Object.assign({file: elem.file}, elem));
   }
 
-  // @authorize({permissions: [PermissionKey.UpdateFileableFile]})
-  @authorize({permissions: ['*']})
+  @authorize({permissions: [PermissionKey.UpdateFileableFile]})
+  // @authorize({permissions: ['*']})
   @patch('/fileable-files')
   @response(200, {
     description: 'FileableFile PATCH success count',
@@ -110,8 +111,8 @@ export class FileableFileController {
     return this.fileableFileRepository.updateAll(fileableFile, where);
   }
 
-  // @authorize({permissions: [PermissionKey.ViewFileableFile]})
-  @authorize({permissions: ['*']})
+  @authorize({permissions: [PermissionKey.ViewFileableFile]})
+  // @authorize({permissions: ['*']})
   @get('/fileable-files/{id}')
   @response(200, {
     description: 'FileableFile model instance',
@@ -130,8 +131,8 @@ export class FileableFileController {
     return Object.assign({file: res.file}, res);
   }
 
-  // @authorize({permissions: [PermissionKey.UpdateFileableFile]})
-  @authorize({permissions: ['*']})
+  @authorize({permissions: [PermissionKey.UpdateFileableFile]})
+  // @authorize({permissions: ['*']})
   @patch('/fileable-files/{id}')
   @response(204, {
     description: 'FileableFile PATCH success',
@@ -150,8 +151,8 @@ export class FileableFileController {
     await this.fileableFileRepository.updateById(id, fileableFile);
   }
 
-  // @authorize({permissions: [PermissionKey.UpdateFileableFile]})
-  @authorize({permissions: ['*']})
+  @authorize({permissions: [PermissionKey.UpdateFileableFile]})
+  // @authorize({permissions: ['*']})
   @put('/fileable-files/{id}')
   @response(204, {
     description: 'FileableFile PUT success',
@@ -163,8 +164,8 @@ export class FileableFileController {
     await this.fileableFileRepository.replaceById(id, fileableFile);
   }
 
-  // @authorize({permissions: [PermissionKey.DeleteFileableFile]})
-  @authorize({permissions: ['*']})
+  @authorize({permissions: [PermissionKey.DeleteFileableFile]})
+  // @authorize({permissions: ['*']})
   @del('/fileable-files/{id}')
   @response(204, {
     description: 'FileableFile DELETE success',

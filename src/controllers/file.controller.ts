@@ -33,6 +33,7 @@ import {
   STRATEGY,
 } from 'loopback4-authentication';
 import {authorize} from 'loopback4-authorization';
+import {PermissionKey} from '../enums/permission-key.enum';
 import {BLOB_SERVICE, FILE_UPLOAD_SERVICE} from '../keys';
 import {File as FileModel, FileDownloadDto, FileWithRelations} from '../models';
 import {FileRepository} from '../repositories';
@@ -69,7 +70,8 @@ export class FileController {
   ) {}
 
   @authenticate(STRATEGY.BEARER)
-  @authorize({permissions: ['*']})
+  // @authorize({permissions: ['*']})
+  @authorize({permissions: [PermissionKey.ViewFile]})
   @get('/files')
   @response(200, {
     description: 'Array of File model instances',
@@ -89,8 +91,8 @@ export class FileController {
   }
 
   @authenticate(STRATEGY.BEARER)
-  // @authorize({permissions: [PermissionKey.CreateFile]})
-  @authorize({permissions: ['*']})
+  @authorize({permissions: [PermissionKey.CreateFile]})
+  // @authorize({permissions: ['*']})
   @post('/files', {
     responses: {
       200: {
@@ -129,8 +131,8 @@ export class FileController {
   }
 
   @authenticate(STRATEGY.BEARER)
-  // @authorize({permissions: [PermissionKey.CreateFile]})
-  @authorize({permissions: ['*']})
+  @authorize({permissions: [PermissionKey.CreateFile]})
+  // @authorize({permissions: ['*']})
   @del('/file/temp', {
     responses: {
       204: {
@@ -164,8 +166,8 @@ export class FileController {
   }
 
   @authenticate(STRATEGY.BEARER)
-  // @authorize({permissions: [PermissionKey.ViewFile]})
-  @authorize({permissions: ['*']})
+  @authorize({permissions: [PermissionKey.ViewFile]})
+  // @authorize({permissions: ['*']})
   @post('/filedownload')
   async downloadFile(
     @requestBody({
