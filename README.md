@@ -1,6 +1,6 @@
 # lb4-files-extension
 
-[![LoopBack](https://github.com/loopbackio/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png)](http://loopback.io/)
+[![LoopBack](<https://github.com/loopbackio/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png>)](http://loopback.io/)
 
 ## Installation
 
@@ -8,6 +8,21 @@ Install Lb4FilesExtensionComponent using `npm`;
 
 ```sh
 $ [npm install | yarn add] lb4-files-extension
+```
+
+## Needed Permissions
+
+```ts
+export const enum PermissionKey {
+  ViewFile = 'ViewFile',
+  CreateFile = 'CreateFile',
+  DeleteFile = 'DeleteFile',
+
+  ViewFileableFile = 'ViewFileableFile',
+  CreateFileableFile = 'CreateFileableFile',
+  UpdateFileableFile = 'UpdateFileableFile',
+  DeleteFileableFile = 'DeleteFileableFile',
+}
 ```
 
 ## Basic Use
