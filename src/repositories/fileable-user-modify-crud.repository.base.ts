@@ -1,18 +1,5 @@
-import {
-  AuthUser,
-  DefaultUserModifyCrudRepository,
-  Entity,
-  UserdbDataSource,
-} from '@BringBeyond/lb4-base-extension';
-import {
-  AnyObject,
-  Count,
-  DataObject,
-  Filter,
-  Getter,
-  Inclusion,
-  InclusionFilter,
-} from '@loopback/repository';
+import {AuthUser, DefaultUserModifyCrudRepository, Entity, UserdbDataSource} from '@BringBeyond/lb4-base-extension';
+import {AnyObject, Count, DataObject, Filter, Getter, Inclusion, InclusionFilter} from '@loopback/repository';
 import {HttpErrors} from '@loopback/rest';
 import {Options} from 'loopback-datasource-juggler';
 import {FileableFileRepository, FileableRepository, FileRepository} from '.';
@@ -44,10 +31,10 @@ export abstract class FileableUserModifyCrudRepository<
   async addFiles(
     fileableId: FileableUserModifiableEntity | String,
     files: (File | String) | (File | String)[],
+    options?: Options,
   ): Promise<FileableFile | FileableFile[]> {
     //let fileId: String;
-    if (!(fileableId instanceof String) && fileableId.id)
-      fileableId = fileableId.id;
+    if (!(fileableId instanceof String) && fileableId.id) fileableId = fileableId.id;
     if (!Array.isArray(files)) files = [files];
     const fileableFiles: FileableFile[] = [];
     for (let file of files) {
@@ -60,7 +47,8 @@ export abstract class FileableUserModifyCrudRepository<
         }),
       );
     }
-    return this.fileableFileRepo.createAll(fileableFiles);
+    debug(fileableFiles);
+    return this.fileableFileRepo.createAll(fileableFiles, options);
   }
 
   async deleteFiles(
@@ -69,8 +57,7 @@ export abstract class FileableUserModifyCrudRepository<
   ): Promise<Count> {
     let fileId;
     const orFilter = [];
-    if (!(fileableId instanceof String) && fileableId.id)
-      fileableId = fileableId.id;
+    if (!(fileableId instanceof String) && fileableId.id) fileableId = fileableId.id;
     if (!Array.isArray(files)) {
       files = [files];
     }
@@ -79,11 +66,7 @@ export abstract class FileableUserModifyCrudRepository<
       if (file instanceof File) fileId = file.id;
       else fileId = file;
       orFilter.push({
-        and: [
-          {fileableId: <string>fileableId},
-          {fileableType: this.fileableType},
-          {fileId: <string>fileId},
-        ],
+        and: [{fileableId: <string>fileableId}, {fileableType: this.fileableType}, {fileId: <string>fileId}],
       });
     }
     return this.fileableFileRepo.deleteAll({or: orFilter});
@@ -97,14 +80,13 @@ export abstract class FileableUserModifyCrudRepository<
     options?: Options,
   ): Promise<T> {
     let files: File[] = [];
-    if (entity.fileObjects)
-      files = await this.handleFileObjects(entity.fileObjects);
+    if (entity.fileObjects) files = await this.handleFileObjects(entity.fileObjects);
     entity.fileableType = this.fileableType;
     delete entity.fileObjects;
     delete entity.deleteFileObjects;
     const res = await super.create(entity, options);
-    await this.fileableRepo.create(res);
-    await this.addFiles(res, files);
+    await this.fileableRepo.create(res, options);
+    await this.addFiles(res, files, options);
     return res;
   }
 
@@ -127,14 +109,12 @@ export abstract class FileableUserModifyCrudRepository<
     options?: Options,
   ): Promise<void> {
     let files: File[] = [];
-    if (entity.fileObjects)
-      files = await this.handleFileObjects(entity.fileObjects);
+    if (entity.fileObjects) files = await this.handleFileObjects(entity.fileObjects);
     delete entity.fileObjects;
-    if (entity.deleteFileObjects)
-      await this.deleteFiles(entity, entity.deleteFileObjects);
+    if (entity.deleteFileObjects) await this.deleteFiles(entity, entity.deleteFileObjects);
     delete entity.deleteFileObjects;
-    await this.addFiles(entity, files);
-    return super.update(entity);
+    await this.addFiles(entity, files, options);
+    return super.update(entity, options);
   }
 
   async updateById(
@@ -146,14 +126,13 @@ export abstract class FileableUserModifyCrudRepository<
     options?: Options,
   ): Promise<void> {
     let files: File[] = [];
-    if (data.fileObjects)
-      files = await this.handleFileObjects(data.fileObjects);
+    if (data.fileObjects) files = await this.handleFileObjects(data.fileObjects);
     delete data.fileObjects;
-    if (data.deleteFileObjects)
-      await this.deleteFiles(<String>(<unknown>id), data.deleteFileObjects);
+    if (data.deleteFileObjects) await this.deleteFiles(<String>(<unknown>id), data.deleteFileObjects);
     delete data.deleteFileObjects;
-    await this.addFiles(<String>(<unknown>id), files);
-    return super.updateById(id, data);
+    debug('Adding Files');
+    await this.addFiles(<String>(<unknown>id), files, options);
+    return super.updateById(id, data, options);
   }
 
   private async handleFileObjects(fileObjects: FileObject[]): Promise<File[]> {
@@ -161,34 +140,29 @@ export abstract class FileableUserModifyCrudRepository<
     const user = await this.getCurrentUser();
     let fileRecord;
     for (const fileObject of fileObjects) {
+      debug('fileObject');
       debug(fileObject);
       fileRecord = await this.fileRepo.findOne({
         where: {fileId: fileObject.fileId},
       });
+      debug('fileRecord');
       debug(fileRecord);
       if (!fileRecord?.id) {
         throw new HttpErrors.NotFound();
       }
       // update File
-      fileRecord.fileType =
-        fileObject.fileType ?? fileRecord.fileType ?? 'attachment';
+      fileRecord.fileType = fileObject.fileType ?? fileRecord.fileType ?? 'attachment';
       fileRecord.tenantId = user?.defaultTenant ?? fileRecord.tenantId ?? '';
       await this.fileRepo.update(fileRecord);
       // upload File
-      if (!fileRecord.blobSync)
-        await this.blobstorageService.uploadFile(
-          fileRecord,
-          fileRecord.tenantId,
-        );
+      if (!fileRecord.blobSync) await this.blobstorageService.uploadFile(fileRecord, fileRecord.tenantId);
       files.push(fileRecord);
     }
+    debug(files);
     return files;
   }
 
-  async find(
-    filter?: Filter<T>,
-    options?: Options,
-  ): Promise<(T & Relations)[]> {
+  async find(filter?: Filter<T>, options?: Options): Promise<(T & Relations)[]> {
     const filters = this.splitInclusionFilter(filter);
     if (filters) {
       const resp = await super.find(filters?.fileableFilter, options);
@@ -197,10 +171,7 @@ export abstract class FileableUserModifyCrudRepository<
     } else return super.find(filter, options);
   }
 
-  async findOne(
-    filter?: Filter<T>,
-    options?: Options,
-  ): Promise<(T & Relations) | null> {
+  async findOne(filter?: Filter<T>, options?: Options): Promise<(T & Relations) | null> {
     const filters = this.splitInclusionFilter(filter);
     if (filters) {
       const resp = await super.findOne(filters?.fileableFilter, options);
@@ -209,11 +180,7 @@ export abstract class FileableUserModifyCrudRepository<
     } else return super.findOne(filter, options);
   }
 
-  async findById(
-    id: ID,
-    filter?: Filter<T>,
-    options?: Options,
-  ): Promise<T & Relations> {
+  async findById(id: ID, filter?: Filter<T>, options?: Options): Promise<T & Relations> {
     const filters = this.splitInclusionFilter(filter);
     if (filters) {
       const resp = await super.findById(id, filters?.fileableFilter, options);
@@ -226,10 +193,7 @@ export abstract class FileableUserModifyCrudRepository<
       let fileScopeFilter: Filter<AnyObject> | undefined;
       const fileableIncludeFilter: InclusionFilter[] = [];
       for (const filterObj of filter.include) {
-        if (
-          filterObj === 'files' ||
-          (<Inclusion>filterObj).relation === 'files'
-        ) {
+        if (filterObj === 'files' || (<Inclusion>filterObj).relation === 'files') {
           fileScopeFilter = (<Inclusion>filterObj).scope;
         } else fileableIncludeFilter.push(filterObj);
       }
@@ -239,10 +203,7 @@ export abstract class FileableUserModifyCrudRepository<
   }
 
   //takes fileables and filter (file scope) and includes related files
-  private async includeFilesOne(
-    fileable: T & Relations,
-    filter?: Filter<AnyObject>,
-  ): Promise<T & Relations> {
+  private async includeFilesOne(fileable: T & Relations, filter?: Filter<AnyObject>): Promise<T & Relations> {
     const filesFilter = {
       where: {
         fileableId: fileable?.id,
@@ -256,17 +217,13 @@ export abstract class FileableUserModifyCrudRepository<
     //filter fileableFile objects
     const fileableFiles = [];
     for (const fileableFile of fileablesFilesRes) {
-      if (fileableFile.file)
-        fileableFiles.push(Object.assign({}, fileableFile));
+      if (fileableFile.file) fileableFiles.push(Object.assign({}, fileableFile));
     }
     return Object.assign({fileableFiles: fileableFiles}, fileable);
   }
 
   //takes array of fileables and a filter (file scope) and includes files to corresponding fileable objects
-  private async includeFiles(
-    fileables: (T & Relations)[],
-    filter?: Filter<AnyObject>,
-  ): Promise<(T & Relations)[]> {
+  private async includeFiles(fileables: (T & Relations)[], filter?: Filter<AnyObject>): Promise<(T & Relations)[]> {
     //create orFiler to get fileableFiles from all fileables
     const orFilter = [];
     for (const fileable of fileables) {
@@ -297,10 +254,7 @@ export abstract class FileableUserModifyCrudRepository<
     //insert fileableFiles array to corresponding fileable object
     const fileablesRes: (T & Relations)[] = [];
     for (const fileable of fileables) {
-      if (fileable.id)
-        fileablesRes.push(
-          Object.assign({fileableFiles: map[fileable.id]}, fileable),
-        );
+      if (fileable.id) fileablesRes.push(Object.assign({fileableFiles: map[fileable.id]}, fileable));
     }
     return fileablesRes;
   }

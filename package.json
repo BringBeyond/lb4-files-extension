@@ -50,7 +50,7 @@
     "@loopback/testlab": "^5.0.1"
   },
   "dependencies": {
-    "@BringBeyond/lb4-base-extension": "^0.9.0",
+    "@BringBeyond/lb4-base-extension": "^0.9.8",
     "@azure/storage-blob": "^12.10.0",
     "@loopback/boot": "^5.0.1",
     "@loopback/context": "^5.0.1",

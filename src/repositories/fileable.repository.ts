@@ -1,5 +1,5 @@
 import {inject} from '@loopback/core';
-import {DefaultCrudRepository} from '@loopback/repository';
+import {DefaultCrudRepository, Options} from '@loopback/repository';
 import {HttpErrors} from '@loopback/rest';
 import {FilesdbDataSource} from '../datasources';
 import {Fileable, FileableRelations} from '../models';
@@ -10,23 +10,20 @@ export class FileableRepository extends DefaultCrudRepository<
   typeof Fileable.prototype.fileableId,
   FileableRelations
 > {
-
-  constructor(
-    @inject('datasources.db') dataSource: FilesdbDataSource,
-  ) {
+  constructor(@inject('datasources.db') dataSource: FilesdbDataSource) {
     super(Fileable, dataSource);
   }
 
-  async create(fileable: FileableUserModifiableEntity): Promise<Fileable> {
+  async create(fileable: FileableUserModifiableEntity, options?: Options): Promise<Fileable> {
     const obj: Fileable = new Fileable();
     if (!fileable.id) throw new HttpErrors.UnprocessableEntity('Id is missing in the request parameters');
     obj.fileableId = fileable.id;
     obj.fileableType = fileable.fileableType;
-    return super.create(obj);
+    return super.create(obj, options);
   }
 
   async createAll(fileables: FileableUserModifiableEntity[]): Promise<Fileable[]> {
-    let objs: Fileable[] = [];
+    const objs: Fileable[] = [];
     fileables.forEach(fileable => {
       const obj: Fileable = new Fileable();
       if (!fileable.id) return;
@@ -36,5 +33,4 @@ export class FileableRepository extends DefaultCrudRepository<
     });
     return super.createAll(objs);
   }
-
 }
