@@ -13,7 +13,7 @@ export class FileableFile extends FileableUserModifiableEntity {
 
   @belongsTo(
     () => File,
-    {name: 'file_id'},
+    {name: 'file'},
     {
       name: 'file_id',
       required: true,
@@ -34,7 +34,7 @@ export class FileableFile extends FileableUserModifiableEntity {
 }
 
 export interface FileableFileRelations {
-  file: FileWithRelations
+  file: FileWithRelations;
 }
 
 export type FileableFileWithRelations = FileableFile & FileableFileRelations;
