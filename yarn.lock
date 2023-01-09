@@ -279,10 +279,10 @@
     "@babel/helper-validator-identifier" "^7.19.1"
     "to-fast-properties" "^2.0.0"
 
-"@BringBeyond/lb4-base-extension@^1.1.12":
-  "integrity" "sha512-I++GZeoGCDJXRPWUs6SfNybfgTh8xwkg14I2aFz4NqIVn70JcW5/m6SRpPOljXSn+pdh2cvY+AEtOzUxSo7bzw=="
-  "resolved" "https://npm.pkg.github.com/download/@BringBeyond/lb4-base-extension/1.1.12/ffcb28619bce2cf28f24290ed99bc01e0196f27c"
-  "version" "1.1.12"
+"@BringBeyond/lb4-base-extension@^1.1.13":
+  "integrity" "sha512-/UfW9/zLri66umhfyTfD9ZUaZSDllpRlsLUVM6XLNUWfyEiQZOLFSoNmQjgt0ZG56XWnOFkbrECWigkwVjLgVA=="
+  "resolved" "https://npm.pkg.github.com/download/@BringBeyond/lb4-base-extension/1.1.13/82467dccdd0759d57e74ba1ed0ef95c60b26c274"
+  "version" "1.1.13"
   dependencies:
     "@loopback/core" "^4.0.4"
     "@loopback/health" "^0.11.3"
@@ -300,7 +300,7 @@
     "jsonwebtoken" "^8.5.1"
     "lodash" "^4.17.21"
     "loopback-connector-kv-redis" "^4.0.0"
-    "loopback-connector-postgresql" "^6.0.0"
+    "loopback-connector-postgresql" "^5.5.2"
     "loopback-datasource-juggler" "^4.27.1"
     "loopback4-authentication" "^7.0.0"
     "loopback4-authorization" "^5.0.7"
@@ -3838,19 +3838,19 @@
     "loopback-connector" "^4.0.0"
     "strong-globalize" "^6.0.1"
 
-"loopback-connector-postgresql@^6.0.0":
-  "integrity" "sha512-sLq+RC8ZahTeY2zrxwh0eBJOIO1l8wRbdOQVjOh9nYJVSRU4BocVacTCrfnJBiwhKG76ubq3T28BGv2s0y+v1w=="
-  "resolved" "https://registry.npmjs.org/loopback-connector-postgresql/-/loopback-connector-postgresql-6.0.0.tgz"
-  "version" "6.0.0"
+"loopback-connector-postgresql@^5.5.2":
+  "integrity" "sha512-crkJcdviXcMU7yl5Mf9XmpYaupfkJg9AG/S8BnNgc+eJqGQqkw+DXJbVDSDthLP32ji+yACOTvcn/hexMJYQKQ=="
+  "resolved" "https://registry.npmjs.org/loopback-connector-postgresql/-/loopback-connector-postgresql-5.5.2.tgz"
+  "version" "5.5.2"
   dependencies:
     "async" "^3.2.0"
     "bluebird" "^3.4.6"
     "chalk" "^4.0.0"
     "debug" "^4.1.1"
-    "loopback-connector" "^5.1.1"
+    "loopback-connector" "^5.0.0"
     "pg" "^8.0.2"
     "strong-globalize" "^6.0.0"
-    "uuid" "^9.0.0"
+    "uuid" "^8.3.0"
 
 "loopback-connector@^4.0.0":
   "integrity" "sha512-EA31zur3xIhP4UW+P2rWEcSbqpk4jPddpTBZSSw8KCszM7T0/Pe4HvEmG0MndAWJctRPtrwKDEu/8rWuMDLf+A=="
@@ -3864,7 +3864,7 @@
     "strong-globalize" "^5.1.0"
     "uuid" "^7.0.3"
 
-"loopback-connector@^5.1.0":
+"loopback-connector@^5.0.0":
   "integrity" "sha512-v4USSFPI/8tVurOuUFTV04+StkhsAapQVfByLAZkSMqnqop4NCq7ILQlVtMEO/cEiA1wJz/q30mihuUz4/Hd8w=="
   "resolved" "https://registry.npmjs.org/loopback-connector/-/loopback-connector-5.2.0.tgz"
   "version" "5.2.0"
@@ -3876,7 +3876,7 @@
     "strong-globalize" "^6.0.5"
     "uuid" "^8.3.2"
 
-"loopback-connector@^5.1.1":
+"loopback-connector@^5.1.0":
   "integrity" "sha512-v4USSFPI/8tVurOuUFTV04+StkhsAapQVfByLAZkSMqnqop4NCq7ILQlVtMEO/cEiA1wJz/q30mihuUz4/Hd8w=="
   "resolved" "https://registry.npmjs.org/loopback-connector/-/loopback-connector-5.2.0.tgz"
   "version" "5.2.0"
