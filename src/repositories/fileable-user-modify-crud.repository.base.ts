@@ -248,7 +248,7 @@ export abstract class FileableUserModifyCrudRepository<
       if (map[fileableFile.fileableId]) {
         map[fileableFile.fileableId].push(Object.assign({}, fileableFile));
       }
-      map[fileableFile.fileableId] = [Object.assign({}, fileableFile)];
+      else map[fileableFile.fileableId] = [Object.assign({}, fileableFile)];
     }
 
     //insert fileableFiles array to corresponding fileable object
